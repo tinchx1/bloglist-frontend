@@ -16,6 +16,12 @@ const create = (newObject) => {
     }
   }
   const request = axios.post(baseUrl, newObject, config)
-  return request.then(response => response.data)
+  return request.then(response => {
+    return response
+  })
+    .catch(error => {
+      console.error('Error en la solicitud POST:', error)
+      throw error
+    })
 }
 export default { getAll, create, setToken }

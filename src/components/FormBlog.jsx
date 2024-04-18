@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const FormBlog = ({ handleCreate }) => {
+const FormBlog = ({ handleCreate, setNotification }) => {
   const [formData, setFormData] = useState({ title: '', author: '', url: '' })
 
   const handleChange = (event) => {
@@ -11,6 +11,10 @@ const FormBlog = ({ handleCreate }) => {
     event.preventDefault()
     handleCreate(formData)
     setFormData({ title: '', author: '', url: '' })
+    setNotification(`a new blog ${formData.title} by ${formData.author} added`)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
   return (
     <form onSubmit={handleSubmit}>

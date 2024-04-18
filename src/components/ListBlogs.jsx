@@ -1,12 +1,15 @@
+import blogsService from '../services/blogsService'
 import Blog from './Blog'
 import FormBlog from './FormBlog'
-const ListBlogs = ({ blogs, username, setUser, setBlogs, blogService, loginService }) => {
+import Togglable from './Togglable'
+const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginService }) => {
   const handleLogout = () => {
     setUser(null)
+    window.localStorage.removeItem('loggedBlogAppUser')
   }
   const handleCreate = async (newObject) => {
-    await blogService.create(newObject)
-    setBlogs([...blogs, newObject])
+    const response = await blogsService.create(newObject)
+    setBlogs([...blogs, response.data])
   }
   return (
     <div>
@@ -14,10 +17,13 @@ const ListBlogs = ({ blogs, username, setUser, setBlogs, blogService, loginServi
       <p>{username} logged in</p>
       <button onClick={handleLogout}>Logout</button>
       <h3>Add a new blog</h3>
-      <FormBlog
-        loginService={loginService}
-        handleCreate={handleCreate}
-      />
+      <Togglable buttonLabel='create new note'>
+        <FormBlog
+          setNotification={setNotification}
+          loginService={loginService}
+          handleCreate={handleCreate}
+        />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
