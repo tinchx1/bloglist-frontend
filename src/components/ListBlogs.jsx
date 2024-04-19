@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import blogsService from '../services/blogsService'
 import Blog from './Blog'
 import FormBlog from './FormBlog'
@@ -9,7 +10,19 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
   }
   const handleCreate = async (newObject) => {
     const response = await blogsService.create(newObject)
+    togglableRef.current.toggleVisibility()
     setBlogs([...blogs, response.data])
+  }
+  const togglableRef = useRef()
+
+  const handleUpdate = async (newObject) => {
+    try {
+      const request = await blogsService.update(newObject.id, newObject)
+      setBlogs(blogs.map(blog => blog.id !== newObject.id ? blog : request))
+    } catch (error) {
+      console.error('Error updating blog:', error)
+      setNotification({ message: 'Error updating blog', type: 'error' })
+    }
   }
   return (
     <div>
@@ -17,7 +30,7 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
       <p>{username} logged in</p>
       <button onClick={handleLogout}>Logout</button>
       <h3>Add a new blog</h3>
-      <Togglable buttonLabel='create new note'>
+      <Togglable ref={togglableRef} buttonLabel='create new note'>
         <FormBlog
           setNotification={setNotification}
           loginService={loginService}
@@ -25,7 +38,7 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
         />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog handleUpdate={handleUpdate} key={blog.id} blog={blog} />
       )}
     </div>
   )
