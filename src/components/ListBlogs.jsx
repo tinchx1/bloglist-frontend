@@ -24,6 +24,17 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
       setNotification({ message: 'Error updating blog', type: 'error' })
     }
   }
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+      try {
+        await blogsService.remove(id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+      } catch (error) {
+        console.error('Error deleting blog:', error)
+        setNotification({ message: 'Error deleting blog', type: 'error' })
+      }
+    }
+  }
   return (
     <div>
       <h2>blogs</h2>
@@ -37,10 +48,13 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
           handleCreate={handleCreate}
         />
       </Togglable>
-      {blogs.map(blog =>
-        <Blog handleUpdate={handleUpdate} key={blog.id} blog={blog} />
+      {blogs.sort((a, b) => {
+        return b.likes - a.likes
+      }).map(blog =>
+        <Blog handleDelete={handleDelete} handleUpdate={handleUpdate} key={blog.id} blog={blog} />
       )}
     </div>
   )
 }
+
 export default ListBlogs

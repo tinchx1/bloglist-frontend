@@ -37,4 +37,17 @@ const update = (id, newObject) => {
       throw error
     })
 }
-export default { getAll, create, setToken, update }
+const remove = (id) => {
+  const config = {
+    headers: {
+      Authorization: token
+    }
+  }
+  const request = axios.delete(`${baseUrl}/${id}`, config)
+  return request.then(response => response.data)
+    .catch(error => {
+      console.error('Error en la solicitud DELETE:', error)
+      throw error
+    })
+}
+export default { getAll, create, setToken, update, remove }

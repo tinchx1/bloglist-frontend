@@ -1,5 +1,6 @@
 import { useState } from 'react'
-const Blog = ({ blog, handleUpdate }) => {
+import PropTypes from 'prop-types'
+const Blog = ({ blog, handleUpdate, handleDelete }) => {
   const [show, setShow] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -29,9 +30,15 @@ const Blog = ({ blog, handleUpdate }) => {
           <p>{blog.url}</p>
           <p>{blog.likes}</p> <button onClick={handleLike}>like</button>
           <p>{blog.user.username}</p>
+          <button onClick={() => handleDelete(blog.id)}>remove</button>
         </div>
       )}
     </div>
   )
+}
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired
 }
 export default Blog
