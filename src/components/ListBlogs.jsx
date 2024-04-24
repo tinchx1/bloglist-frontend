@@ -3,7 +3,14 @@ import blogsService from '../services/blogsService'
 import Blog from './Blog'
 import FormBlog from './FormBlog'
 import Togglable from './Togglable'
-const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginService }) => {
+import { useNotificationStore } from '../store/notification'
+import { useBlogsStore } from '../store/blogs'
+import { useUsersStore } from '../store/user'
+
+const ListBlogs = ({ username }) => {
+  const { setUser } = useUsersStore()
+  const { blogs, updateBlog, removeBlog, addBlog } = useBlogsStore()
+  const { setNotification } = useNotificationStore()
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogAppUser')
@@ -11,14 +18,14 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
   const handleCreate = async (newObject) => {
     const response = await blogsService.create(newObject)
     togglableRef.current.toggleVisibility()
-    setBlogs([...blogs, response.data])
+    addBlog(response.data)
   }
   const togglableRef = useRef()
 
   const handleUpdate = async (newObject) => {
     try {
       const request = await blogsService.update(newObject.id, newObject)
-      setBlogs(blogs.map(blog => blog.id !== newObject.id ? blog : request))
+      updateBlog(request)
     } catch (error) {
       console.error('Error updating blog:', error)
       setNotification({ message: 'Error updating blog', type: 'error' })
@@ -28,7 +35,7 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
     if (window.confirm('Are you sure you want to delete this blog?')) {
       try {
         await blogsService.remove(id)
-        setBlogs(blogs.filter(blog => blog.id !== id))
+        removeBlog(id)
       } catch (error) {
         console.error('Error deleting blog:', error)
         setNotification({ message: 'Error deleting blog', type: 'error' })
@@ -41,10 +48,8 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
       <p>{username} logged in</p>
       <button onClick={handleLogout}>Logout</button>
       <h3>Add a new blog</h3>
-      <Togglable ref={togglableRef} buttonLabel='create new note'>
+      <Togglable ref={togglableRef} buttonLabel='create new blog'>
         <FormBlog
-          setNotification={setNotification}
-          loginService={loginService}
           handleCreate={handleCreate}
         />
       </Togglable>

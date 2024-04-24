@@ -1,6 +1,10 @@
 import blogsService from '../services/blogsService'
 import loginService from '../services/loginService'
-const FormLogin = ({ setNotification, username, setUsername, password, setPassword, setUser }) => {
+import { useNotificationStore } from '../store/notification'
+import { useUsersStore } from '../store/user'
+const FormLogin = ({ username, setUsername, password, setPassword }) => {
+  const { setUser } = useUsersStore()
+  const { setNotification } = useNotificationStore()
   const handleLogin = async (event) => {
     try {
       event.preventDefault()
@@ -29,6 +33,7 @@ const FormLogin = ({ setNotification, username, setUsername, password, setPasswo
       <form onSubmit={handleLogin}>
         <label>username</label>
         <input
+          data-testid='username'
           name='username'
           value={username}
           onChange={({ target }) => setUsername(target.value)}
@@ -37,6 +42,7 @@ const FormLogin = ({ setNotification, username, setUsername, password, setPasswo
         <br />
         <label>password</label>
         <input
+          data-testid='password'
           name='password'
           value={password}
           onChange={({ target }) => setPassword(target.value)}

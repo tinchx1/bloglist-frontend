@@ -28,8 +28,7 @@ const Blog = ({ blog, handleUpdate, handleDelete }) => {
         <div>
           <p>{blog.author}</p> <button onClick={() => setShow(false)}>hide</button>
           <p>{blog.url}</p>
-          <p>{blog.likes}</p> <button onClick={handleLike}>like</button>
-          <p>{blog.user.username}</p>
+          <p>{blog.likes} likes</p> <button data-testid='like' onClick={handleLike}>like</button>
           <button onClick={() => handleDelete(blog.id)}>remove</button>
         </div>
       )}

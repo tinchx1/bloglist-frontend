@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react'
 import blogService from './services/blogsService'
 import ListBlogs from './components/ListBlogs'
-import FormLogin from './components/Formlogin'
+import { useNotificationStore } from './store/notification'
+import { useBlogsStore } from './store/blogs'
+import FormLogin from './components/FormLogin'
+import { useUsersStore } from './store/user'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
+  const { fetchBlogs } = useBlogsStore()
+  const { user, setUser } = useUsersStore()
+  console.log('user:', user)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState(null)
+  const notification = useNotificationStore(state => state.notification)
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    fetchBlogs()
   }, [])
   useEffect(() => {
     const loggedUserJson = window.localStorage.getItem('loggedBlogAppUser')
@@ -28,20 +30,14 @@ const App = () => {
       {user === null
         ? (
           <FormLogin
-            setUser={setUser}
             username={username}
             setUsername={setUsername}
             password={password}
             setPassword={setPassword}
-            setNotification={setNotification}
           />)
         : (
           <ListBlogs
-            setBlogs={setBlogs}
-            setUser={setUser}
             username={username}
-            blogs={blogs}
-            setNotification={setNotification}
           />)}
     </div>
   )
