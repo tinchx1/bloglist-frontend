@@ -24,13 +24,14 @@ const create = (newObject) => {
       throw error
     })
 }
-const update = (id, newObject) => {
+const update = (newObject) => {
   const config = {
     headers: {
       Authorization: token
     }
   }
-  const request = axios.put(`${baseUrl}/${id}`, newObject, config)
+  console.log('newObject:', newObject)
+  const request = axios.put(`${baseUrl}/${newObject.id}`, newObject, config)
   return request.then(response => response.data)
     .catch(error => {
       console.error('Error en la solicitud PUT:', error)

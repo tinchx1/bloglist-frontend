@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const FormBlog = ({ handleCreate, setNotification }) => {
+const FormBlog = ({ handleCreate, notificationDispatch }) => {
   const [formData, setFormData] = useState({ title: '', author: '', url: '' })
 
   const handleChange = (event) => {
@@ -11,9 +11,9 @@ const FormBlog = ({ handleCreate, setNotification }) => {
     event.preventDefault()
     handleCreate(formData)
     setFormData({ title: '', author: '', url: '' })
-    setNotification(`a new blog ${formData.title} by ${formData.author} added`)
+    notificationDispatch({ data: `a new blog ${formData.title} by ${formData.author} added`, type: 'SET_NOTIFICATION' })
     setTimeout(() => {
-      setNotification(null)
+      notificationDispatch({ type: 'REMOVE_NOTIFICATION' })
     }, 5000)
   }
   return (

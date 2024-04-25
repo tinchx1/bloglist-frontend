@@ -1,37 +1,37 @@
-import { useRef } from 'react'
-import blogsService from '../services/blogsService'
+import { useContext, useRef } from 'react'
 import Blog from './Blog'
 import FormBlog from './FormBlog'
 import Togglable from './Togglable'
-const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginService }) => {
+import UserContext from '../UserContext'
+
+const ListBlogs = ({ deleteBlogMutation, notificationDispatch, updateBlogMutation, blogs, username, newBlogMutation, loginService }) => {
+  const [, userDispatch] = useContext(UserContext)
   const handleLogout = () => {
-    setUser(null)
+    userDispatch({ type: 'REMOVE_USER' })
     window.localStorage.removeItem('loggedBlogAppUser')
   }
   const handleCreate = async (newObject) => {
-    const response = await blogsService.create(newObject)
+    newBlogMutation.mutate(newObject)
     togglableRef.current.toggleVisibility()
-    setBlogs([...blogs, response.data])
   }
+
   const togglableRef = useRef()
 
   const handleUpdate = async (newObject) => {
     try {
-      const request = await blogsService.update(newObject.id, newObject)
-      setBlogs(blogs.map(blog => blog.id !== newObject.id ? blog : request))
+      console.log('newObject:', newObject)
+      updateBlogMutation.mutate(newObject)
     } catch (error) {
       console.error('Error updating blog:', error)
-      setNotification({ message: 'Error updating blog', type: 'error' })
+      notificationDispatch({ message: 'Error updating blog', type: 'SET_NOTIFICATION' })
     }
   }
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
       try {
-        await blogsService.remove(id)
-        setBlogs(blogs.filter(blog => blog.id !== id))
+        deleteBlogMutation.mutate(id)
       } catch (error) {
-        console.error('Error deleting blog:', error)
-        setNotification({ message: 'Error deleting blog', type: 'error' })
+        notificationDispatch({ message: 'Error deleting blog', type: 'SET_NOTIFICATION' })
       }
     }
   }
@@ -43,7 +43,7 @@ const ListBlogs = ({ setNotification, blogs, username, setUser, setBlogs, loginS
       <h3>Add a new blog</h3>
       <Togglable ref={togglableRef} buttonLabel='create new note'>
         <FormBlog
-          setNotification={setNotification}
+          notificationDispatch={notificationDispatch}
           loginService={loginService}
           handleCreate={handleCreate}
         />

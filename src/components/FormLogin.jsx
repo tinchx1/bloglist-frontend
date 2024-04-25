@@ -1,6 +1,9 @@
+import { useContext } from 'react'
 import blogsService from '../services/blogsService'
 import loginService from '../services/loginService'
-const FormLogin = ({ setNotification, username, setUsername, password, setPassword, setUser }) => {
+import UserContext from '../UserContext'
+const FormLogin = ({ notificationDispatch, username, setUsername, password, setPassword }) => {
+  const [, userDispatch] = useContext(UserContext)
   const handleLogin = async (event) => {
     try {
       event.preventDefault()
@@ -10,16 +13,15 @@ const FormLogin = ({ setNotification, username, setUsername, password, setPasswo
       })
       setUsername('')
       setPassword('')
-      setUser(user)
+      userDispatch({ data: user, type: 'SET_USER' })
       blogsService.setToken(user.token)
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
       )
     } catch (e) {
-      console.log(e)
-      setNotification('Wrong credentials')
+      notificationDispatch({ data: 'Wrong credentials', type: 'SET_NOTIFICATION' })
       setTimeout(() => {
-        setNotification(null)
+        notificationDispatch({ type: 'REMOVE_NOTIFICATION' })
       }, 5000)
     }
   }
