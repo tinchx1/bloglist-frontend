@@ -1,9 +1,9 @@
 import { useState, useEffect, useReducer } from 'react'
 import blogService from './services/blogsService'
-import ListBlogs from './components/ListBlogs'
 import FormLogin from './components/Formlogin'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import UserContext from './UserContext'
+import { Menu } from './components/menu'
 
 const notificationReducer = (state, action) => {
   switch (action.type) {
@@ -82,11 +82,11 @@ const App = () => {
               notificationDispatch={notificationDispatch}
             />)
           : (
-            <ListBlogs
+            <Menu
               newBlogMutation={newBlogMutation}
               updateBlogMutation={updateBlogMutation}
               deleteBlogMutation={deleteBlogMutation}
-              username={username}
+              username={user.username}
               blogs={blogs}
               notificationDispatch={notificationDispatch}
             />)}

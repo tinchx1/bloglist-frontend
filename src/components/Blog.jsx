@@ -1,7 +1,6 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
-const Blog = ({ blog, handleUpdate, handleDelete }) => {
-  const [show, setShow] = useState(false)
+import { Link } from 'react-router-dom'
+
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -9,36 +8,14 @@ const Blog = ({ blog, handleUpdate, handleDelete }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  const handleLike = () => {
-    const newBlog = {
-      user: blog.user,
-      likes: blog.likes + 1,
-      id: blog.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url
-    }
-    handleUpdate(newBlog)
-  }
+
   return (
     <div style={blogStyle}>
-      <p>{blog.title} {blog.author}</p>
-      <button onClick={() => setShow(true)}>view</button>
-      {show && (
-        <div>
-          <p>{blog.author}</p> <button onClick={() => setShow(false)}>hide</button>
-          <p>{blog.url}</p>
-          <p>{blog.likes}</p> <button onClick={handleLike}>like</button>
-          <p>{blog.user.username}</p>
-          <button onClick={() => handleDelete(blog.id)}>remove</button>
-        </div>
-      )}
+      <Link to={`/${blog.id}`}>
+        <p>{blog.title} {blog.author}</p>
+      </Link>
     </div>
   )
 }
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  handleUpdate: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired
-}
+
 export default Blog
