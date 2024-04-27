@@ -24,6 +24,26 @@ const create = (newObject) => {
       throw error
     })
 }
+const createComment = (newObject, id) => {
+  const config = {
+    headers: {
+      Authorization: token
+    }
+  }
+  const request = axios.post(`${baseUrl}/${id}/comments`, newObject, config)
+  return request.then(response => {
+    console.log('response:', response)
+    return response
+  })
+    .catch(error => {
+      console.error('Error en la solicitud POST:', error)
+      throw error
+    })
+}
+const getComment = (id) => {
+  const request = axios.get(`${baseUrl}/${id}/comments`)
+  return request.then(response => response.data)
+}
 const update = (newObject) => {
   const config = {
     headers: {
@@ -51,4 +71,4 @@ const remove = (id) => {
       throw error
     })
 }
-export default { getAll, create, setToken, update, remove }
+export default { getAll, create, setToken, update, remove, createComment, getComment }
